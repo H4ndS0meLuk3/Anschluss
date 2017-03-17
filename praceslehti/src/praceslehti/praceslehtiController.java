@@ -22,20 +22,25 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 
 /**
  *
  * @author DOMA
  */
 public class praceslehtiController implements Initializable {
+
+	private int total = 0;
+        ObservableList<Zbozi> zbozi;
     
      @FXML 
     private Label trzba;
+   @FXML 
+   private TextArea text;
    
     @FXML 
-    private TableView sklad;
-    @FXML 
-    private ChoiceBox vyber;
+    private ChoiceBox<Zbozi> vyber;
    
     @FXML
     private Label nic;
@@ -43,10 +48,39 @@ public class praceslehtiController implements Initializable {
     private Label nic2;
     @FXML
     private void handleButtonAction(ActionEvent secti) {
-        int i = 5;
-        int a = 0+i;
-    System.out.println("You clicked me!");
-        trzba.setText( "Máte"+a+ "Kč");
+	Zbozi vybranezbozi = vyber.getValue();
+        if (vybranezbozi.pocet <= 0) {
+            Alert alert = new Alert(AlertType.WARNING);
+            alert.setTitle("Varování !");
+            alert.setHeaderText("Nedostatek zboží na skladě");
+            alert.setContentText("Doplňte " + vybranezbozi.jmeno);
+            alert.showAndWait();
+            return;
+        }
+        vybranezbozi.pocet -= 1;
+	System.out.println("Přidali jste "+vybranezbozi.jmeno+ "!");
+    	total += vybranezbozi.cena;
+        napsatZbozi();
+        trzba.setText( "Celkem "+ total + " Kč");
+    }
+     @FXML
+    private void handleButtonAction2(ActionEvent ucet) {
+	    total = 0;
+    System.out.println("Vynulovali jste účet !");
+        trzba.setText( "Celkem "+ total + " Kč");
+    }
+    
+    private void napsatZbozi() {
+        StringBuilder pismena = new StringBuilder();
+        for (Zbozi vec : zbozi) {
+            pismena.append(vec.jmeno);
+            pismena.append("  ");
+            pismena.append(vec.pocet);
+            pismena.append("  ");
+            pismena.append(vec.cena);
+            pismena.append("\n");
+        }
+        text.setText(pismena.toString());
     }
     
     @Override
@@ -54,7 +88,7 @@ public class praceslehtiController implements Initializable {
        try (BufferedReader br = new BufferedReader(new FileReader("sklad.txt")))
 {
         String s;
-        ObservableList<Zbozi> zbozi = FXCollections.observableArrayList();
+        zbozi = FXCollections.observableArrayList();
         while ((s = br.readLine()) != null)
         {
             String[] casti = s.split(" ");
@@ -67,12 +101,15 @@ public class praceslehtiController implements Initializable {
         }
 
     vyber.setItems(zbozi);
+    napsatZbozi();
 }
 catch (Exception e)
 {
 	e.printStackTrace();
         System.err.println("Chyba při načtení ze souboru.");
 }
-    }    
+       
+    } 
+    
     
 }

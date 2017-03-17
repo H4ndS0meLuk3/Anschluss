@@ -3,3 +3,5 @@ Jablko 4 40
 Pivo 20 80
 Chleba 20 20
 Limo 20 80
+Kava 30 20
+Parek 25 50

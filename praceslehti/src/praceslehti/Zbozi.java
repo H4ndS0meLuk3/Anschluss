@@ -19,7 +19,7 @@ public class Zbozi {
    public int cena;
     
     
-    Zbozi ( String jmeno , int pocet , int cena ){
+    Zbozi ( String jmeno , int cena , int pocet ){
     this.jmeno =jmeno;
     this.pocet = pocet;
     this.cena= cena;
